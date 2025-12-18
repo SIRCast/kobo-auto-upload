@@ -1,9 +1,20 @@
-name: Test Workflow
+name: Upload to KoBo
 
-on: [push]
+on:
+  push:
+    paths:
+      - data/data.csv
 
 jobs:
-  test:
+  upload:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "GitHub Actions working"
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - run: pip install -r requirements.txt
+      - run: python scripts/upload_to_kobo.py
+        env:
+          KOBO_TOKEN: ${{ secrets.KOBO_TOKEN }}
+          KOBO_ASSET_ID: ${{ secrets.KOBO_ASSET_ID }}
